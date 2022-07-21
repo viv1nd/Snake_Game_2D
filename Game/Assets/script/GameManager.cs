@@ -22,23 +22,35 @@ public class GameManager : MonoBehaviour
     public Transform poison;
     public Transform food;
     //public Transform powerup;
-    public Text text;
+    [Range(0f,10f)]
+    public float speed = 0.7f;
+    public Text scoreText;
+    private float gametime = 0;
+    public Text timerText;
     private int score = 0;
+
 
     private void Start()
     {
-        text.text = score.ToString();
+        scoreText.text = score.ToString();
     }
 
     private void Update()
     {
-        
+        gametime = gametime + Time.deltaTime;
+        timerText.text = Mathf.RoundToInt(gametime).ToString();
     }
 
     public void AddScore()
     {
         score++;
-        text.text = score.ToString();
+        scoreText.text = score.ToString();
+    }
+
+    public void ResetScore()
+    {
+        score = 0;
+        scoreText.text = score.ToString();
     }
 
     public void RemoveScore()
@@ -48,7 +60,7 @@ public class GameManager : MonoBehaviour
             return;
         }
         score--;
-        text.text = score.ToString();
+        scoreText.text = score.ToString();
     }
 
     public Vector2 GenerateSpawnPoint(BoxCollider2D gridArea)
@@ -65,11 +77,15 @@ public class GameManager : MonoBehaviour
 
     private bool ValidatePosition(Vector2 aPosition)
     {
-        foreach(Eatable mapObject in onMapObjects)
+        Debug.Log("validating points"); 
+        foreach (Eatable mapObject in onMapObjects)
         {
+
             Vector2 bPosition = new Vector2(mapObject.transform.position.x, mapObject.transform.position.y);
+            Debug.Log("validating point a:" + aPosition + " and pointb: " + bPosition);
             float distance = CheckDistance(aPosition, bPosition);
-            if(distance < 2.5f)
+            Debug.Log(distance);
+            if(distance < 6.5f)
             {
                 return false;
             }

@@ -5,13 +5,15 @@ using System.Collections;
 
 public class Snake : MonoBehaviour
 {
-    private Vector2 _direction = Vector2.down;
+    private Vector3 _direction = Vector3.down;
 
-    public List<Transform> _snakeparts = new List<Transform>();         
+    public List<Transform> _snakeparts = new List<Transform>();
+
+    
 
     public Transform snakePrefab;
 
-    [SerializeField] private int _intialsnakesize = 3;
+    private int _intialsnakesize = 0;
 
     [SerializeField] private Transform tailParent = null;
 
@@ -55,7 +57,7 @@ public class Snake : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(transform.position.x == -30 || transform.position.x == 30)
+        if(transform.position.x <= -30 || transform.position.x >= 30)
         {
             Vector2 vec;
             float x = transform.position.x;
@@ -65,7 +67,7 @@ public class Snake : MonoBehaviour
             vec.y = y;
             transform.position = vec;
         }
-        if (transform.position.y == -15 || transform.position.y == 15)
+        if (transform.position.y <= -15 || transform.position.y >= 15)
         {
             Vector2 vec;
             float y = transform.position.y;
@@ -82,26 +84,33 @@ public class Snake : MonoBehaviour
             if(_snakeparts[i]!= null)
                 _snakeparts[i].position = _snakeparts[i - 1].position;
         }
-        if(_snakeparts[0])
-        _snakeparts[0].position = transform.position;
-       this.transform.position = new Vector3(
-       Mathf.Round(this.transform.position.x) + _direction.x,
-       Mathf.Round(this.transform.position.y) + _direction.y,
-       0.0f
-       );
+        if(_snakeparts.Count != 0)
+            _snakeparts[0].position = transform.position - _direction;
+        this.transform.position = new Vector3(
+            transform.position.x + _direction.x * GameManager.Instance.speed,
+            transform.position.y + _direction.y * GameManager.Instance.speed,
+            0.0f
+        );
     }
 
     private void Grow()
     {
         Transform tail = Instantiate(this.snakePrefab);
-        tail.position = _snakeparts[_snakeparts.Count - 1].position;
+        if(_snakeparts.Count != 0)
+            tail.position = _snakeparts[_snakeparts.Count - 1].position;
+        else
+            tail.position = new Vector3(
+            transform.position.x - _direction.x,
+            transform.position.y - _direction.y,
+            0.0f
+        );
         _snakeparts.Add(tail);
     }
 
 
     public void Poison()
     {
-        if(_snakeparts.Count == 1)
+        if(_snakeparts.Count < 1)
         {
             ResetState();
             return;
@@ -135,6 +144,7 @@ public class Snake : MonoBehaviour
 
         generateSnake();
         transform.position = Vector3.zero;
+        GameManager.Instance.ResetScore();
     }
 
 
