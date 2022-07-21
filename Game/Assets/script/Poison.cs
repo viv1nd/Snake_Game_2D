@@ -6,7 +6,7 @@ public class Poison : Eatable
 {
     public override void OnDigest()
     {
-        GameManager.Instance.score--;
+        GameManager.Instance.RemoveScore();
         base.OnDigest();
     }
 }

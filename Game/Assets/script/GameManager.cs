@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -21,12 +22,33 @@ public class GameManager : MonoBehaviour
     public Transform poison;
     public Transform food;
     //public Transform powerup;
-
-    public int score = 0;
+    public Text text;
+    private int score = 0;
 
     private void Start()
     {
-         
+        text.text = score.ToString();
+    }
+
+    private void Update()
+    {
+        
+    }
+
+    public void AddScore()
+    {
+        score++;
+        text.text = score.ToString();
+    }
+
+    public void RemoveScore()
+    {
+        if (score < 1)
+        {
+            return;
+        }
+        score--;
+        text.text = score.ToString();
     }
 
     public Vector2 GenerateSpawnPoint(BoxCollider2D gridArea)

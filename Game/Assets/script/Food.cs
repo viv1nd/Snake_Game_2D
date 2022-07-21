@@ -6,7 +6,7 @@ public class Food : Eatable
 {
     public override void OnDigest()
     {
-        GameManager.Instance.score++;
+        GameManager.Instance.AddScore();
         base.OnDigest();
     }
 }
