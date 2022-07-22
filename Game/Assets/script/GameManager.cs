@@ -22,17 +22,28 @@ public class GameManager : MonoBehaviour
     public Transform poison;
     public Transform food;
     //public Transform powerup;
-    [Range(0f,10f)]
-    public float speed = 0.7f;
+    [SerializeField] [Range(0f,10f)] private float speed;
+    public float GetSpeed()
+    {
+        return speed;
+    }
+
     public Text scoreText;
-    private float gametime = 0;
+    
+    public float gametime = 0;
     public Text timerText;
     private int score = 0;
+
+    [SerializeField] private float startSpeed = 1.1f;
+    [SerializeField] private float powerupSpeed = 0.7f;
 
 
     private void Start()
     {
         scoreText.text = score.ToString();
+        speed = startSpeed;
+
+
     }
 
     private void Update()
@@ -40,6 +51,7 @@ public class GameManager : MonoBehaviour
         gametime = gametime + Time.deltaTime;
         timerText.text = Mathf.RoundToInt(gametime).ToString();
     }
+
 
     public void AddScore()
     {
@@ -63,6 +75,16 @@ public class GameManager : MonoBehaviour
         scoreText.text = score.ToString();
     }
 
+    public void speedup()
+    {
+        speed = startSpeed;
+    }
+
+    public void SpeedDown()
+    {
+        speed = powerupSpeed;
+    }
+
     public Vector2 GenerateSpawnPoint(BoxCollider2D gridArea)
     {
         Bounds bounds = gridArea.bounds;
@@ -70,7 +92,7 @@ public class GameManager : MonoBehaviour
         position.x = Random.Range(bounds.min.x, bounds.max.x);
         position.y = Random.Range(bounds.min.y, bounds.max.y);
         if (!ValidatePosition(position))
-            GenerateSpawnPoint(gridArea);
+             position = GenerateSpawnPoint(gridArea);
         return position;
             
     }

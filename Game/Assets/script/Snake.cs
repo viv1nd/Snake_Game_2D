@@ -10,12 +10,14 @@ public class Snake : MonoBehaviour
     public List<Transform> _snakeparts = new List<Transform>();
 
     
-
     public Transform snakePrefab;
 
     private int _intialsnakesize = 0;
 
     [SerializeField] private Transform tailParent = null;
+
+    float currentTime = 0;
+    bool spacePressed = false;
 
     private void Start()
     {
@@ -24,12 +26,22 @@ public class Snake : MonoBehaviour
 
     private void Update()
     {
+        if (spacePressed)
+        {
+            if (GameManager.Instance.gametime - currentTime > 5f)
+            {
+                GameManager.Instance.SpeedDown();
+                spacePressed = false;
+            }
+        }
+
         if (Input.GetKeyDown(KeyCode.W) && _direction.x != 0)
         {
             Vector2 vec;
             vec.x = 0;
             vec.y = 1;
             _direction = vec;
+            transform.rotation = Quaternion.Euler(0,0,0);
         }
         else if ( Input.GetKeyDown(KeyCode.S) && _direction.x != 0)
         {
@@ -37,6 +49,7 @@ public class Snake : MonoBehaviour
             vec.x = 0;
             vec.y = -1;
             _direction = vec;
+            transform.rotation = Quaternion.Euler(0, 0, 180);
         }
         else if (Input.GetKeyDown(KeyCode.A) && _direction.y != 0)
         {
@@ -44,6 +57,7 @@ public class Snake : MonoBehaviour
             vec.x = -1;
             vec.y = 0;
             _direction = vec;
+            transform.rotation = Quaternion.Euler(0, 0, 90);
         }
         else if (Input.GetKeyDown(KeyCode.D) && _direction.y != 0)
         {
@@ -51,8 +65,19 @@ public class Snake : MonoBehaviour
             vec.x = 1;
             vec.y = 0;
             _direction = vec;
-            
+            transform.rotation = Quaternion.Euler(0, 0, -90);
         }
+        else if (Input.GetKeyDown(KeyCode.Space))
+        {
+            GameManager.Instance.speedup();
+            currentTime = GameManager.Instance.gametime;
+            spacePressed = true;
+        }
+
+
+        
+
+
     }
 
     private void FixedUpdate()
@@ -78,20 +103,22 @@ public class Snake : MonoBehaviour
             transform.position = vec;
         }
 
+        if (_snakeparts.Count != 0)
+            _snakeparts[0].position = transform.position - _direction * 1.1f;
 
         for (int i = _snakeparts.Count -1; i > 0; i--)
         {
             if(_snakeparts[i]!= null)
                 _snakeparts[i].position = _snakeparts[i - 1].position;
         }
-        if(_snakeparts.Count != 0)
-            _snakeparts[0].position = transform.position - _direction;
+
         this.transform.position = new Vector3(
-            transform.position.x + _direction.x * GameManager.Instance.speed,
-            transform.position.y + _direction.y * GameManager.Instance.speed,
+            transform.position.x + _direction.x * GameManager.Instance.GetSpeed(),
+            transform.position.y + _direction.y * GameManager.Instance.GetSpeed(),
             0.0f
         );
     }
+
 
     private void Grow()
     {
